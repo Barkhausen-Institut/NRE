@@ -38,8 +38,8 @@ const TestCase pingpongxpd = {
 
 typedef void (*client_func)(AvgProfiler &prof, Pt &pt, UtcbFrame &uf, uint &sum);
 
-static const uint tries = 100;
-static const Profiler::time_t outlier = 100000;
+static const uint tries = 1000;
+static const Profiler::time_t outlier = 1000000000;
 static PingpongService *srv;
 
 class PingpongSession : public ServiceSession {
@@ -112,7 +112,7 @@ static int pingpong_client(int, char *argv[]) {
 
     ClientSession sess("pingpong");
     Pt pt(sess.caps() + cpu);
-    AvgProfiler prof(tries, 5, outlier);
+    AvgProfiler prof(tries, 0, outlier);
     UtcbFrame uf;
     for(uint i = 0; i < tries; i++) {
         prof.start();
@@ -124,6 +124,8 @@ static int pingpong_client(int, char *argv[]) {
     WVPRINT("min: " << prof.min());
     WVPRINT("max: " << prof.max());
     WVPRINT("var: " << prof.variance());
+    for(uint i = 0; i < tries; i++)
+        WVPRINT(prof.result(i));
     return 0;
 }
 
@@ -134,6 +136,9 @@ static void test_pingpong() {
     client_func clientfuncs[] = {client_empty/*, client_data*/};
     const char *names[] = {"empty", "data"};
     for(auto cpu = CPU::begin(); cpu != CPU::end(); ++cpu) {
+        if(cpu->log_id() == CPU::current().log_id())
+            continue;
+
         for(size_t i = 0; i < ARRAY_SIZE(funcs); ++i) {
             WVPRINT("Using the " << names[i] << " portal between CPU "
                 << CPU::current().log_id() << " and " << cpu->log_id() << ":");
