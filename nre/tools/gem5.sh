@@ -6,12 +6,12 @@ if [ ! -d "$GEM5_DIR" ]; then
 fi
 
 # Exec,ExecPC,Faults,I82094AA,LocalApic
-gem5args=" --remote-gdb-port=1234 --debug-flags=Faults"
+gem5args=" --outdir=$GEM5_OUT --remote-gdb-port=1234 --debug-flags=Faults"
 # gem5args="$gem5args --debug-start=3071984000"
 gem5args="$gem5args $GEM5_DIR/configs/example/fs.py"
-gem5args="$gem5args --command-line=\"novga serial\""
-gem5args="$gem5args --caches --l1i_size=32kB --l1d_size=64kB --l2cache --l2_size=512kB"
-gem5args="$gem5args --cpu-type DerivO3CPU --cpu-clock 3GHz --sys-clock 1GHz --mem-size=256MB"
+gem5args="$gem5args --kernel=\"$(readlink -f $1/bin/apps/bootloader)\" --command-line=\"novga serial\""
+gem5args="$gem5args --caches --l1i_size=32kB --l1d_size=32kB --l2cache --l2_size=512kB"
+gem5args="$gem5args --cpu-type DerivO3CPU --cpu-clock 2GHz --sys-clock 1GHz --mem-size=256MB"
 gem5args="$gem5args -n 2"
 
 imgs=`mktemp -d`
@@ -44,11 +44,12 @@ elif [ "$GEM5_DBG" != "" ]; then
 
     rm -f $cmds
 else
-    echo $gem5args | M5_PATH=$imgs xargs $GEM5_DIR/build/X86/gem5.opt > log.txt &
-    while [ "`lsof -i :3456`" = "" ]; do
-        sleep 1
-    done
-    telnet 127.0.0.1 3456
+    echo $gem5args | M5_PATH=$imgs xargs $GEM5_DIR/build/X86/gem5.opt > $GEM5_OUT/log.txt
+    # &
+    # while [ "`lsof -i :3456`" = "" ]; do
+    #     sleep 1
+    # done
+    # telnet 127.0.0.1 3456
 fi
 
 rm -rf $imgs
