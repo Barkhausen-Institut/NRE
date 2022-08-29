@@ -10,7 +10,7 @@ gem5args=" --outdir=$GEM5_OUT --remote-gdb-port=1234 --debug-flags=Faults"
 # gem5args="$gem5args --debug-start=3071984000"
 gem5args="$gem5args $GEM5_DIR/configs/example/fs.py"
 gem5args="$gem5args --kernel=\"$(readlink -f $1/bin/apps/bootloader)\" --command-line=\"novga serial\""
-gem5args="$gem5args --caches --l1i_size=32kB --l1d_size=32kB --l2cache --l2_size=512kB"
+gem5args="$gem5args --caches --l1i_size=32kB --l1d_size=32kB --l2cache --l2_size=1MB"
 gem5args="$gem5args --cpu-type DerivO3CPU --cpu-clock 2GHz --sys-clock 1GHz --mem-size=256MB"
 gem5args="$gem5args -n 2"
 
