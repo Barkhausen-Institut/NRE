@@ -1,6 +1,6 @@
 [submodule "kernel/nova"]
 	path = kernel/nova
-	url = git@github.com:Barkhausen-Institut/NOVA.git
+	url = https://github.com/Barkhausen-Institut/NOVA.git
 [submodule "nre/libs/libseoul"]
 	path = nre/libs/libseoul
 	url = https://github.com/TUD-OS/seoul.git
